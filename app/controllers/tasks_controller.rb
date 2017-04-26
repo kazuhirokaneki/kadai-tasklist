@@ -1,4 +1,5 @@
 class TasksController < ApplicationController
+  before_action :auth_user, only: [:show, :edit, :update, :destroy]
   before_action :require_user_logged_in
   def index
     @tasks = Task.all.page(params[:page]).per(10)
@@ -63,6 +64,12 @@ class TasksController < ApplicationController
     @task = current_user.tasks.find_by(id: params[:id])
     unless @task
       redirect_to root_path
+    end
+  end
+  
+   def auth_user
+    if @task.user != current_user
+      redirect_to root_url
     end
   end
 end
